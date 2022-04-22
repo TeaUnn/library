@@ -1,0 +1,23 @@
+rwmsampler <- function(n,
+                       burn = 50,
+                       c,
+                       log_posterior,
+                       theta_start,
+                       cov,
+                       ...){
+  library(mvtnorm)
+  theta <- matrix(theta_start, nrow = 1)
+  rej <- 0
+  for(s in 2:(n+burn)){
+    theta_prop <- rmvnorm(1,
+                          mean = theta[s-1, ],
+                          sigma = c * cov)
+    r <- exp(log_posterior(c(theta_prop), ...) - log_posterior(c(theta[s-1, ]), ...))
+    if(r < runif(1)){
+      theta <- rbind(theta, theta[s-1, ])
+      rej <- rej + 1
+    } else (theta <- rbind(theta, theta_prop))
+  }
+  samp <- theta[(burn+1):(n+burn), ]
+  return(list("sample" = samp, "acceptance rate" = (n+burn-rej)/(n+burn)))
+}

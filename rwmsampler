@@ -1,10 +1,14 @@
-rwmsampler <- function(n,
-                       burn = 50,
-                       c,
-                       log_posterior,
-                       theta_start,
-                       cov,
-                       ...){
+# the random walk metropolis sampler samples from any given posterior density.
+# proposal density: the multivariate normal density
+# with mu = previous theta and sigma = c * cov.
+
+rwmsampler <- function(n,              # number of samples to draw
+                       burn = 50,      # size of burn-in
+                       c,              # tuning parameter
+                       log_posterior,  # log posterior function to simulate from
+                       theta_start,    # initial values for parameter(s)
+                       cov,            # covariance matrix used in proposal density
+                       ...){           # wildcard arguments to send to log_posterior
   library(mvtnorm)
   theta <- matrix(theta_start, nrow = 1)
   rej <- 0

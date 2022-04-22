@@ -1,0 +1,13 @@
+# ar1sampler samples from an AR(1)-process
+
+ar1sampler <- function(t,       # sample size
+                       mu,      # mean of x
+                       phi,     # dependency parameter
+                       sigma2){ # variance of error term
+  x <- mu
+  for(i in 2:t){
+    x[i] <- mu + phi * (x[i-1] - mu) +
+              rnorm(1, 0, sigma2)
+  }
+  return(x)
+}

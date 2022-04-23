@@ -1,4 +1,6 @@
-# ar1sampler samples from an AR(1)-process
+# ar1sampler samples from a
+# first-order autoregressive model (AR(1))
+# with normal noise
 
 ar1sampler <- function(t,       # sample size
                        mu,      # mean of x

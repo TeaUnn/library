@@ -8,8 +8,9 @@ ar1sampler <- function(t,       # sample size
                        sigma2){ # variance of error term
   x <- mu
   for(i in 2:t){
-    x[i] <- mu + phi * (x[i-1] - mu) +
-              rnorm(1, 0, sigma2)
+    x[i] <- rnorm(1,
+                  mu + phi * (x[i-1] - mu),
+                  sigma2)
   }
   return(x)
 }

@@ -14,5 +14,3 @@ ar1sampler <- function(t,       # sample size
   }
   return(x)
 }
-
-# 

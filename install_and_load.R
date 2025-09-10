@@ -7,11 +7,6 @@
 # it if needed.
 
 install_and_load <- function(pkgs, dependencies = TRUE) {
-  # ensure a CRAN mirror is set (avoids "@CRAN@" default on some systems)
-  if (is.null(getOption("repos")) || identical(getOption("repos")["CRAN"], "@CRAN@")) {
-    options(repos = c(CRAN = "https://cloud.r-project.org"))
-  }
-  
   for (pkg in pkgs) {
     # if not installed, install it
     if (!requireNamespace(pkg, quietly = TRUE)) {

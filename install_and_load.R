@@ -20,8 +20,6 @@ install_and_load <- function(pkgs, dependencies = TRUE) {
         install.packages(pkg, dependencies = dependencies),
         error = function(e) {
           stop("Failed to install '", pkg, "'. Error: ", conditionMessage(e),
-               "\nIf you're behind a corporate proxy, set proxy env vars before retrying, e.g.:",
-               "\nSys.setenv(HTTP_PROXY='http://user:pass@proxy:port', HTTPS_PROXY='http://user:pass@proxy:port')",
                call. = FALSE)
         }
       )

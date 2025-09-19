@@ -6,32 +6,60 @@
 # install.packages() if not needed, but you do want to run
 # it if needed.
 
-install_and_load <- function(pkgs, dependencies = TRUE) {
+install_and_load <- function(pkgs, dependencies = TRUE, stop_on_error = FALSE, verbose = TRUE) {
+  success <- character()
+  failed <- character()
+  
   for (pkg in pkgs) {
-    # if not installed, install it
+    # Try to install if not already installed
     if (!requireNamespace(pkg, quietly = TRUE)) {
       message("Installing '", pkg, "' (with dependencies) ...")
       tryCatch(
         install.packages(pkg, dependencies = dependencies),
         error = function(e) {
-          stop("Failed to install '", pkg, "'. Error: ", conditionMessage(e),
-               call. = FALSE)
+          msg <- paste0("Failed to install '", pkg, "'. Error: ", conditionMessage(e))
+          if (stop_on_error) stop(msg, call. = FALSE) else message(msg)
         }
       )
     }
-    # load silently
-    suppressPackageStartupMessages(
-      library(pkg, character.only = TRUE)
+    
+    # Try to load the package
+    tryCatch(
+      {
+        suppressPackageStartupMessages(
+          library(pkg, character.only = TRUE)
+        )
+        success <- c(success, pkg)
+      },
+      error = function(e) {
+        msg <- paste0("Failed to load '", pkg, "'. Error: ", conditionMessage(e))
+        if (stop_on_error) stop(msg, call. = FALSE) else {
+          message(msg)
+          failed <- c(failed, pkg)
+        }
+      }
     )
   }
-  invisible(TRUE)
+  
+  # Optional summary
+  if (verbose) {
+    message("\n--- Summary ---")
+    message("Successfully loaded: ", if (length(success)) paste(success, collapse = ", ") else "None")
+    message("Failed to load: ", if (length(failed)) paste(failed, collapse = ", ") else "None")
+  }
+  
+  invisible(list(success = success, failed = failed))
 }
+
 
 # --- use like this: -----------------------------------------------------------
 
 # install_and_load(c(
 #   "readxl",   # For reading Excel files
 #   "haven",    # For reading SAS files
-#   "data.table",
-#   "ggplot2"
-# ))
+#   "skräp"
+#   ),
+#   dependencies = TRUE,   # install also dependent packages
+#   stop_on_error = FALSE, # do keep on running if something goes wrong
+#   verbose = TRUE         # give me summary info
+# )
